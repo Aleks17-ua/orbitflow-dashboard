@@ -1,10 +1,18 @@
+import { Suspense } from 'react';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import { getCurrentUser } from '@/lib/seedData';
 
-export const metadata = {
-  title: 'Dashboard'
-};
+function HeaderFallback({ user }) {
+  return (
+    <header className="dashboard-header">
+      <div>
+        <p className="dashboard-header__eyebrow">Workspace</p>
+        <h1 className="dashboard-header__title">{user.workspace}</h1>
+      </div>
+    </header>
+  );
+}
 
 export default function DashboardLayout({ children }) {
   const user = getCurrentUser();
@@ -13,7 +21,9 @@ export default function DashboardLayout({ children }) {
     <div className="dashboard-shell">
       <Sidebar user={user} />
       <div className="dashboard-main">
-        <Header user={user} />
+        <Suspense fallback={<HeaderFallback user={user} />}>
+          <Header user={user} />
+        </Suspense>
         <div className="dashboard-content">{children}</div>
       </div>
     </div>
